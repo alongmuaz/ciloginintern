@@ -69,35 +69,35 @@ class CI_Email {
 	 *
 	 * @var	string	'mail', 'sendmail' or 'smtp'
 	 */
-	public $protocol	= 'mail';		// mail/sendmail/smtp
+	public $protocol	= 'smtp';		// mail/sendmail/smtp
 
 	/**
 	 * STMP Server host
 	 *
 	 * @var	string
 	 */
-	public $smtp_host	= '';
+	public $smtp_host	= 'smtp.mandrillapp.com';
 
 	/**
 	 * SMTP Username
 	 *
 	 * @var	string
 	 */
-	public $smtp_user	= '';
+	public $smtp_user	= 'adamzafri90@gmail.com';
 
 	/**
 	 * SMTP Password
 	 *
 	 * @var	string
 	 */
-	public $smtp_pass	= '';
+	public $smtp_pass	= 'ESKHcLch9NWbsdEuYGDYRg';
 
 	/**
 	 * SMTP Server port
 	 *
 	 * @var	int
 	 */
-	public $smtp_port	= 25;
+	public $smtp_port	= 587;
 
 	/**
 	 * SMTP connection timeout in seconds
@@ -1402,7 +1402,7 @@ class CI_Email {
 					.$this->newline
 					.$this->_body.$this->newline.$this->newline;
 
-			break;
+				break;
 			case 'html-attach' :
 
 				$hdr .= 'Content-Type: multipart/'.$this->multipart.'; boundary="'.$this->_atc_boundary.'"';
@@ -1428,7 +1428,7 @@ class CI_Email {
 					.$this->_prep_quoted_printable($this->_body).$this->newline.$this->newline
 					.'--'.$this->_alt_boundary.'--'.$this->newline.$this->newline;
 
-			break;
+				break;
 		}
 
 		$attachment = array();
@@ -1829,9 +1829,9 @@ class CI_Email {
 		// is popen() enabled?
 		if ( ! function_usable('popen')
 			OR FALSE === ($fp = @popen(
-						$this->mailpath.' -oi -f '.$this->clean_email($this->_headers['From'])
-							.' -t -r '.$this->clean_email($this->_headers['Return-Path'])
-						, 'w'))
+				$this->mailpath.' -oi -f '.$this->clean_email($this->_headers['From'])
+				.' -t -r '.$this->clean_email($this->_headers['Return-Path'])
+				, 'w'))
 		) // server probably has popen disabled, so nothing we can do to get a verbose error.
 		{
 			return FALSE;
@@ -1956,10 +1956,10 @@ class CI_Email {
 		$ssl = ($this->smtp_crypto === 'ssl') ? 'ssl://' : '';
 
 		$this->_smtp_connect = fsockopen($ssl.$this->smtp_host,
-							$this->smtp_port,
-							$errno,
-							$errstr,
-							$this->smtp_timeout);
+			$this->smtp_port,
+			$errno,
+			$errstr,
+			$this->smtp_timeout);
 
 		if ( ! is_resource($this->_smtp_connect))
 		{
@@ -2002,55 +2002,55 @@ class CI_Email {
 		{
 			case 'hello' :
 
-						if ($this->_smtp_auth OR $this->_get_encoding() === '8bit')
-						{
-							$this->_send_data('EHLO '.$this->_get_hostname());
-						}
-						else
-						{
-							$this->_send_data('HELO '.$this->_get_hostname());
-						}
+				if ($this->_smtp_auth OR $this->_get_encoding() === '8bit')
+				{
+					$this->_send_data('EHLO '.$this->_get_hostname());
+				}
+				else
+				{
+					$this->_send_data('HELO '.$this->_get_hostname());
+				}
 
-						$resp = 250;
-			break;
+				$resp = 250;
+				break;
 			case 'starttls'	:
 
-						$this->_send_data('STARTTLS');
-						$resp = 220;
-			break;
+				$this->_send_data('STARTTLS');
+				$resp = 220;
+				break;
 			case 'from' :
 
-						$this->_send_data('MAIL FROM:<'.$data.'>');
-						$resp = 250;
-			break;
+				$this->_send_data('MAIL FROM:<'.$data.'>');
+				$resp = 250;
+				break;
 			case 'to' :
 
-						if ($this->dsn)
-						{
-							$this->_send_data('RCPT TO:<'.$data.'> NOTIFY=SUCCESS,DELAY,FAILURE ORCPT=rfc822;'.$data);
-						}
-						else
-						{
-							$this->_send_data('RCPT TO:<'.$data.'>');
-						}
+				if ($this->dsn)
+				{
+					$this->_send_data('RCPT TO:<'.$data.'> NOTIFY=SUCCESS,DELAY,FAILURE ORCPT=rfc822;'.$data);
+				}
+				else
+				{
+					$this->_send_data('RCPT TO:<'.$data.'>');
+				}
 
-						$resp = 250;
-			break;
+				$resp = 250;
+				break;
 			case 'data'	:
 
-						$this->_send_data('DATA');
-						$resp = 354;
-			break;
+				$this->_send_data('DATA');
+				$resp = 354;
+				break;
 			case 'reset':
 
-						$this->_send_data('RSET');
-						$resp = 250;
-			break;
+				$this->_send_data('RSET');
+				$resp = 250;
+				break;
 			case 'quit'	:
 
-						$this->_send_data('QUIT');
-						$resp = 221;
-			break;
+				$this->_send_data('QUIT');
+				$resp = 221;
+				break;
 		}
 
 		$reply = $this->_get_smtp_data();
